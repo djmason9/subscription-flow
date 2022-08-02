@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+// const fs = require('fs');
+// const path = require('path');
 /**
  * These are your configuration file defaults.
  *
@@ -28,7 +28,7 @@ module.exports = {
 
     // This is the base url the service will be reachable at not including the
     // port
-    baseurl: 'https://159.223.122.129',
+    baseurl: 'https://subapproval.herokuapp.com',
 
     // Enabling this property will print out the process.env at startup time
     printEnvVars: false,
@@ -63,12 +63,12 @@ module.exports = {
     // SSL configuration. For a step-by-step tutorial on how to configure SSL see:
     // https://docs.axway.com/bundle/api-builder-security-guide/page/enabling_tls_ssl.html
     // Note that the sample SSL code below uses the 'fs' and 'path' modules, e.g.:
-    ssl: {
-        port: 8443,
-        key: fs.readFileSync(path.join('/root/ssh', 'server.key'), 'utf8'),
-        cert: fs.readFileSync(path.join('/root/ssh', 'server.crt'), 'utf8'),
-        passphrase: 'secret'
-    },
+    // ssl: {
+    //     port: 8443,
+    //     key: fs.readFileSync(path.join('/root/ssh', 'server.key'), 'utf8'),
+    //     cert: fs.readFileSync(path.join('/root/ssh', 'server.crt'), 'utf8'),
+    //     passphrase: 'secret'
+    // },
 
     // The number of milliseconds before timing out a request to the server.
     timeout: 90000,

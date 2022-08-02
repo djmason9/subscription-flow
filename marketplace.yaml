@@ -17,7 +17,7 @@ metadata:
     name: integrations-for-subscription-approvals
 spec:
   enabled: true
-  url: https://5230-72-216-152-176.ngrok.io/api/amplifycentralwebhookhandler
+  url: https://subapproval.herokuapp.com/api/amplifycentralwebhookhandler
   headers:
       apikey: 8c88-f83b424e523c
       Content-Type: application/json
