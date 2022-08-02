@@ -28,7 +28,7 @@ module.exports = {
 
     // This is the base url the service will be reachable at not including the
     // port
-    baseurl: 'http://localhost',
+    baseurl: 'https://159.223.122.129',
 
     // Enabling this property will print out the process.env at startup time
     printEnvVars: false,
@@ -45,7 +45,7 @@ module.exports = {
 
         // When this is true, the service will no longer listen on requests over http.
         // Disabling http requires 'ssl' to be configured.
-        disabled: false,
+        disabled: true,
 
         // Controls certain header algorithms.
         headers: {
@@ -63,13 +63,12 @@ module.exports = {
     // SSL configuration. For a step-by-step tutorial on how to configure SSL see:
     // https://docs.axway.com/bundle/api-builder-security-guide/page/enabling_tls_ssl.html
     // Note that the sample SSL code below uses the 'fs' and 'path' modules, e.g.:
-
-    // ssl: {
-    // 	port: 8443,
-    //	key: fs.readFileSync(path.join('.', 'ssl','key.pem'), 'utf8'),
-    //	cert: fs.readFileSync(path.join('.', 'ssl','cert.pem'), 'utf8'),
-    //	passphrase: 'secret'
-    // },
+    ssl: {
+        port: 8443,
+        key: fs.readFileSync(path.join('/etc/httpd/conf.d', 'server.key'), 'utf8'),
+        cert: fs.readFileSync(path.join('/etc/httpd/conf.d', 'server.crt'), 'utf8'),
+        passphrase: 'secret'
+    },
 
     // The number of milliseconds before timing out a request to the server.
     timeout: 90000,
@@ -132,7 +131,7 @@ module.exports = {
         // empty list [] will allow unrestricted access, though this is not
         // recommended due to security concerns.
         allowedHosts: [
-            'localhost', '::1'
+            //'10.129.0.0/16', '::1'
         ]
     },
 
@@ -177,11 +176,11 @@ module.exports = {
     // service you created.
     session: {
         encryptionAlgorithm: 'aes256',
-        encryptionKey: 'nt7qzlOdoPlLDv2nTZm0zMo1tX+8HBci//3C9wD0HWQ=',
+        encryptionKey: 'B1FVC7wB31XFyT96RBI6mlnBxz6E1554D1mH/PzxEI8=',
         signatureAlgorithm: 'sha512-drop256',
-        signatureKey: 'eE5v2OE7vi5gX4N4/h0NsHXjEgREP9V369uwchjWOIUnQgzKHcJhHtf34gPpPxPIcRX7eplsBhFHdaAZuuF4ZQ==',
+        signatureKey: 'qgHCX3/ugX6Vea0S35VGsnAmbb5fs8syCw+0JFrV9UHWvdYECm9mXRqd7icgU0Poptl/j0WzUtCe1VW9EOp/pw==',
         // should be a large unguessable string
-        secret: 'JniKq5OZA2vPkMXD8WkEKqc1aPWALhU5',
+        secret: 'jNSU9nRp5tUaiCqn5qK3il6W/qfewEzu',
         // how long the session will stay valid in ms
         duration: 86400000,
         // if expiresIn < activeDuration, the session will be extended by
@@ -191,7 +190,7 @@ module.exports = {
 
     // If you want signed cookies, you can set this value. if you don't want
     // signed cookies, remove or make null
-    cookieSecret: 'feCukTuXEitYlrEeSYCU08hvzHoWv9ar',
+    cookieSecret: 'fg560LxSLiAs2tpDG1z+I0dYRRH55liR',
 
     // Your connector configuration goes here
     connectors: {},
@@ -225,7 +224,7 @@ module.exports = {
     // 'Access-Control-Expose-Headers': ['content-type', 'response-time']
     //
     cors: {
-        // 'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*'
     },
 
     // Health check configuration. The path to a file which exports an express
