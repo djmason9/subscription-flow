@@ -1,0 +1,486 @@
+{
+	"schemaVersion": "4",
+	"info": {
+		"name": "post-approver"
+	},
+	"parameter": {
+		"properties": {
+			"request": {
+				"description": "The request"
+			},
+			"config": {
+				"type": "object",
+				"description": "The service's configuration"
+			},
+			"env": {
+				"type": "object",
+				"description": "The host OS environment"
+			}
+		},
+		"additionalProperties": false
+	},
+	"start": "javascript.1",
+	"nodes": {
+		"javascript.1": {
+			"type": "nodehandler://@axway/api-builder-plugin-fn-javascript/javascript",
+			"name": "checkValid",
+			"method": "Execute",
+			"parameters": [
+				{
+					"name": "data",
+					"type": "jsonpath",
+					"value": "$",
+					"metaName": "Data",
+					"metaDescription": "The value to apply as the `data` argument of the JavaScript code. For objects and arrays, `data` is passed by reference."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"value": "\"// customfield_10050 = Jira custom field 'Subscription Self Link'\\n  // customfield_10052 = Jira custom field 'Subscription Name'\\n  \\n  let isProject = data.request.body.issue.fields.project.key === data.env.JIRA_PROJECT_KEY;\\n  let isDone = data.request.body.issue.fields.status.name === 'Done';\\n\\n  //https://stackoverflow.com/questions/5515310/is-there-a-standard-function-to-check-for-null-undefined-or-blank-variables-in\\n  let hasSelfLink = false;\\n  if (data.request.body.issue.fields.customfield_10050) {hasSelfLink = true;}\\n  \\n  let hasApprovalSatatus = false;\\n  if (data.request.body.issue.fields.customfield_10049) {hasApprovalSatatus = true;}\\n  \\n  \\n  return isProject && isDone && hasSelfLink && hasApprovalSatatus;\"",
+					"metaName": "Code",
+					"metaDescription": "A JavaScript function body. Supports `await` and returning promises. `data` is the value of the Data parameter. `logger` is the API Builder logger. See the docs for more info: https://docs.axway.com/bundle/api-builder/page/docs/developer_guide/flows/flow_nodes/javascript_flow_node/index.html"
+				}
+			],
+			"outputs": {
+				"next": {
+					"context": "$.result",
+					"routes": [
+						"condition.1"
+					],
+					"metaName": "Next"
+				},
+				"error": {
+					"context": "$.error",
+					"routes": [],
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "Execute"
+		},
+		"condition.1": {
+			"type": "nodehandler://axway-flow/condition",
+			"name": "Equals",
+			"method": "equals",
+			"parameters": [
+				{
+					"name": "source",
+					"type": "jsonpath",
+					"value": "$.result",
+					"metaName": "Source",
+					"metaDescription": "The input to test."
+				},
+				{
+					"name": "value",
+					"type": "boolean",
+					"value": "true",
+					"metaName": "Value",
+					"metaDescription": "The value to test input against."
+				}
+			],
+			"outputs": {
+				"true": {
+					"routes": [
+						"javascript.2"
+					],
+					"context": "$.equals",
+					"metaName": "True"
+				},
+				"false": {
+					"routes": [],
+					"context": "$.equals",
+					"metaName": "False"
+				}
+			},
+			"metaMethod": "Equals"
+		},
+		"javascript.2": {
+			"type": "nodehandler://@axway/api-builder-plugin-fn-javascript/javascript",
+			"name": "prepareGetToken",
+			"method": "Execute",
+			"parameters": [
+				{
+					"name": "data",
+					"type": "jsonpath",
+					"value": "$",
+					"metaName": "Data",
+					"metaDescription": "The value to apply as the `data` argument of the JavaScript code. For objects and arrays, `data` is passed by reference."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"value": "\"let dataToencode = data.env.CLIENT_ID+':'+data.env.CLIENT_SECRET;\\n  let buff = new Buffer(dataToencode);\\n  let encodedData = buff.toString('base64');\\n \\n  let url = 'https://login.axway.com/auth/realms/Broker/protocol/openid-connect/token';\\n  let headers = {\\n    Authorization : 'Basic '+encodedData,\\n   'Content-Type': 'application/x-www-form-urlencoded'\\n  };\\n  let body = {\\n    grant_type: 'client_credentials'\\n  };\\n \\n return {url,headers,body};\"",
+					"metaName": "Code",
+					"metaDescription": "A JavaScript function body. Supports `await` and returning promises. `data` is the value of the Data parameter. `logger` is the API Builder logger. See the docs for more info: https://docs.axway.com/bundle/api-builder/page/docs/developer_guide/flows/flow_nodes/javascript_flow_node/index.html"
+				}
+			],
+			"outputs": {
+				"next": {
+					"context": "$.result",
+					"routes": [
+						"rest.1"
+					],
+					"metaName": "Next"
+				},
+				"error": {
+					"context": "$.error",
+					"routes": [],
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "Execute"
+		},
+		"rest.1": {
+			"type": "nodehandler://@axway/api-builder-plugin-fn-restclient/rest",
+			"name": "getToken",
+			"method": "post",
+			"parameters": [
+				{
+					"name": "body",
+					"type": "jsonpath",
+					"value": "$.result.body",
+					"metaName": "Body",
+					"metaDescription": "The content to send."
+				},
+				{
+					"name": "url",
+					"type": "jsonpath",
+					"value": "$.result.url",
+					"metaName": "URL",
+					"metaDescription": "The target URL."
+				},
+				{
+					"name": "headers",
+					"type": "jsonpath",
+					"value": "$.result.headers",
+					"metaName": "Headers",
+					"metaDescription": "The HTTP headers to set."
+				}
+			],
+			"outputs": {
+				"2xx": {
+					"routes": [
+						"javascript.3"
+					],
+					"context": "$.getTokenResponse",
+					"metaName": "2XX"
+				},
+				"3xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "3XX"
+				},
+				"4xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "4XX"
+				},
+				"5xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "5XX"
+				},
+				"error": {
+					"routes": [],
+					"context": "$.error",
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "POST"
+		},
+		"javascript.3": {
+			"type": "nodehandler://@axway/api-builder-plugin-fn-javascript/javascript",
+			"name": "prepareApproveRequest",
+			"method": "Execute",
+			"parameters": [
+				{
+					"name": "data",
+					"type": "jsonpath",
+					"value": "$",
+					"metaName": "Data",
+					"metaDescription": "The value to apply as the `data` argument of the JavaScript code. For objects and arrays, `data` is passed by reference."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"value": "\"let url = data.request.body.issue.fields.customfield_10050;\\n   let headers = {\\n     'Content-Type': 'application/json',\\n     Authorization: 'Bearer '+data.getTokenResponse.body.access_token\\n   };\\n  \\n  \\tlet approvalStatus = 'rejected';\\n  \\n  \\tif(data.request.body.issue.fields.customfield_10049.value === 'Approve') {\\n       approvalStatus = 'approved';\\n    }\\n  \\n   let body = {\\n      \\\"approval\\\": {\\n      \\\"state\\\": approvalStatus,\\n      \\\"reason\\\": data.request.body.issue.fields.customfield_10051\\n      }\\n   };\\n   return {url,headers,body};\"",
+					"metaName": "Code",
+					"metaDescription": "A JavaScript function body. Supports `await` and returning promises. `data` is the value of the Data parameter. `logger` is the API Builder logger. See the docs for more info: https://docs.axway.com/bundle/api-builder/page/docs/developer_guide/flows/flow_nodes/javascript_flow_node/index.html"
+				}
+			],
+			"outputs": {
+				"next": {
+					"context": "$.result",
+					"routes": [
+						"rest.2"
+					],
+					"metaName": "Next"
+				},
+				"error": {
+					"context": "$.error",
+					"routes": [],
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "Execute"
+		},
+		"rest.2": {
+			"type": "nodehandler://@axway/api-builder-plugin-fn-restclient/rest",
+			"name": "approveRequest",
+			"method": "put",
+			"parameters": [
+				{
+					"name": "body",
+					"type": "jsonpath",
+					"value": "$.result.body",
+					"metaName": "Body",
+					"metaDescription": "The content to send."
+				},
+				{
+					"name": "url",
+					"type": "jsonpath",
+					"value": "$.result.url",
+					"metaName": "URL",
+					"metaDescription": "The target URL."
+				},
+				{
+					"name": "headers",
+					"type": "jsonpath",
+					"value": "$.result.headers",
+					"metaName": "Headers",
+					"metaDescription": "The HTTP headers to set."
+				}
+			],
+			"outputs": {
+				"2xx": {
+					"routes": [
+						"javascript.4"
+					],
+					"context": "$.response",
+					"metaName": "2XX"
+				},
+				"3xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "3XX"
+				},
+				"4xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "4XX"
+				},
+				"5xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "5XX"
+				},
+				"error": {
+					"routes": [],
+					"context": "$.error",
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "PUT"
+		},
+		"http.1": {
+			"type": "nodehandler://axway-flow/http",
+			"name": "Set HTTP Response",
+			"method": "setresponse",
+			"parameters": [
+				{
+					"name": "status",
+					"type": "number",
+					"value": "200",
+					"metaName": "Status",
+					"metaDescription": "The HTTP status code"
+				}
+			],
+			"outputs": {
+				"next": {
+					"context": "$.response",
+					"routes": [],
+					"metaName": "Next"
+				}
+			},
+			"metaMethod": "Set HTTP Response"
+		},
+		"javascript.4": {
+			"type": "nodehandler://@axway/api-builder-plugin-fn-javascript/javascript",
+			"name": "prepareSendToTeams",
+			"method": "Execute",
+			"parameters": [
+				{
+					"name": "data",
+					"type": "jsonpath",
+					"value": "$",
+					"metaName": "Data",
+					"metaDescription": "The value to apply as the `data` argument of the JavaScript code. For objects and arrays, `data` is passed by reference."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"value": "\"let url=data.env.MS_TEAMS_WEBHOOK_URL;\\n  \\n  let body = {\\n    text: 'Subscription \\\"'+data.request.body.issue.fields.customfield_10052+'\\\" set to '+data.request.body.issue.fields.customfield_10049.value+' by '+data.request.body.user.displayName+' in Jira'\\n  };\\n  \\n  return {url,body};\"",
+					"metaName": "Code",
+					"metaDescription": "A JavaScript function body. Supports `await` and returning promises. `data` is the value of the Data parameter. `logger` is the API Builder logger. See the docs for more info: https://docs.axway.com/bundle/api-builder/page/docs/developer_guide/flows/flow_nodes/javascript_flow_node/index.html"
+				}
+			],
+			"outputs": {
+				"next": {
+					"context": "$.result",
+					"routes": [
+						"rest.3"
+					],
+					"metaName": "Next"
+				},
+				"error": {
+					"context": "$.error",
+					"routes": [],
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "Execute"
+		},
+		"rest.3": {
+			"type": "nodehandler://@axway/api-builder-plugin-fn-restclient/rest",
+			"name": "sendToTeams",
+			"method": "post",
+			"parameters": [
+				{
+					"name": "body",
+					"type": "jsonpath",
+					"value": "$.result.body",
+					"metaName": "Body",
+					"metaDescription": "The content to send."
+				},
+				{
+					"name": "url",
+					"type": "jsonpath",
+					"value": "$.result.url",
+					"metaName": "URL",
+					"metaDescription": "The target URL."
+				}
+			],
+			"outputs": {
+				"2xx": {
+					"routes": [
+						"javascript.5"
+					],
+					"context": "$.response",
+					"metaName": "2XX"
+				},
+				"3xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "3XX"
+				},
+				"4xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "4XX"
+				},
+				"5xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "5XX"
+				},
+				"error": {
+					"routes": [],
+					"context": "$.error",
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "POST"
+		},
+		"javascript.5": {
+			"type": "nodehandler://@axway/api-builder-plugin-fn-javascript/javascript",
+			"name": "prepareAddJiraComment",
+			"method": "Execute",
+			"parameters": [
+				{
+					"name": "data",
+					"type": "jsonpath",
+					"value": "$",
+					"metaName": "Data",
+					"metaDescription": "The value to apply as the `data` argument of the JavaScript code. For objects and arrays, `data` is passed by reference."
+				},
+				{
+					"name": "code",
+					"type": "string",
+					"value": "\"let dataToencode = data.env.JIRA_USERNAME+':'+data.env.JIRA_API_TOKEN;\\n  let buff = new Buffer(dataToencode);\\n  let encodedData = buff.toString('base64');\\n  \\n  let url = data.env.JIRA_URL+'/rest/api/2/issue/'+data.request.body.issue.key+'/comment';\\n  \\n  let headers = {\\n    Authorization : 'Basic '+encodedData,\\n    'Content-Type': 'application/json'\\n  };\\n  \\n  let body = {\\n    body: 'Subscription \\\"'+data.request.body.issue.fields.customfield_10052+'\\\" set to '+data.request.body.issue.fields.customfield_10049.value+' by '+data.request.body.user.displayName+' in Jira and the subscription approval workflow'\\n  };\\n  \\n  return {url, body, headers};\""
+				}
+			],
+			"outputs": {
+				"next": {
+					"context": "$.result",
+					"routes": [
+						"rest.4"
+					],
+					"metaName": "Next"
+				},
+				"error": {
+					"context": "$.error",
+					"routes": [],
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "Execute"
+		},
+		"rest.4": {
+			"type": "nodehandler://@axway/api-builder-plugin-fn-restclient/rest",
+			"name": "addJiraComment",
+			"method": "post",
+			"parameters": [
+				{
+					"name": "body",
+					"type": "jsonpath",
+					"value": "$.result.body",
+					"metaName": "Body",
+					"metaDescription": "The content to send."
+				},
+				{
+					"name": "url",
+					"type": "jsonpath",
+					"value": "$.result.url",
+					"metaName": "URL",
+					"metaDescription": "The target URL."
+				},
+				{
+					"name": "headers",
+					"type": "jsonpath",
+					"value": "$.result.headers",
+					"metaName": "Headers",
+					"metaDescription": "The HTTP headers to set."
+				}
+			],
+			"outputs": {
+				"2xx": {
+					"routes": [
+						"http.1"
+					],
+					"context": "$.response",
+					"metaName": "2XX"
+				},
+				"3xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "3XX"
+				},
+				"4xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "4XX"
+				},
+				"5xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "5XX"
+				},
+				"error": {
+					"routes": [],
+					"context": "$.error",
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "POST"
+		}
+	}
+}

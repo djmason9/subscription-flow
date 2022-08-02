@@ -1,0 +1,42 @@
+group: management
+apiVersion: v1alpha1
+kind: Integration
+title: Integrations for Marketplace Subscription Approvals
+name: integrations-for-subscription-approvals
+spec:
+  description: This is a group of resources to be used for marketplace subscription approval workflows
+---
+group: management
+apiVersion: v1alpha1
+kind: Webhook
+title: Webhook Listener for Marketplace Subscription Approvals
+name: wh-integrations-for-subscription-approvals
+metadata:
+  scope:
+    kind: Integration
+    name: integrations-for-subscription-approvals
+spec:
+  enabled: true
+  url: https://5230-72-216-152-176.ngrok.io/api/amplifycentralwebhookhandler
+  headers:
+      apikey: 8c88-f83b424e523c
+      Content-Type: application/json
+---
+group: management
+apiVersion: v1alpha1
+kind: ResourceHook
+title: Resource Hook for Marketplace Subscription Approvals
+name: rh-integrations-for-subscription-approvals
+metadata:
+  scope:
+    kind: Integration
+    name: integrations-for-subscription-approvals
+spec:
+  triggers:
+    - group: catalog
+      kind: Subscription
+      name: "*"
+      type:
+      - updated
+  webhooks:
+    - wh-integrations-for-subscription-approvals

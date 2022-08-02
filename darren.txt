@@ -1,0 +1,22 @@
+axway auth login --client-id demo-service_3ba9c5d5-cb5b-47f6-909f-174ecc6b7099 --secret-file c3c6c0b3-bbcb-438b-8c88-f83b424e523c
+
+curl --request POST \
+  --url 'https://auth.atlassian.com/oauth/token' \
+  --header 'Content-Type: application/json' \
+  --data '{"grant_type": "authorization_code","client_id": "YOUR_CLIENT_ID","client_secret": "YOUR_CLIENT_SECRET","code": "YOUR_AUTHORIZATION_CODE","redirect_uri": "https://YOUR_APP_CALLBACK_URL"}'
+
+curl -H "Authorization: Basic dkxxmWaQXI6UGw1Nl6P6DCB0" -X GET -H "Content-Type: application/json" https://bitcows.atlassian.net/rest/api/2/issue/BIT-1
+
+echo -n darren@bitcows.com:dkxxmWaQXI6UGw1Nl6P6DCB0 | base64
+
+curl -D- \
+   -X GET \
+   -H "Authorization: Basic ZGFycmVuQGJpdGNvd3MuY29tOmRreHhtV2FRWEk2VUd3MU5sNlA2RENCMA===" \
+   -H "Content-Type: application/json" \
+   "https://bitcows.atlassian.net/rest/api/2/issue/BIT-1"
+
+https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=YpIcEYM90Q2rcNoWtbJqKuetux5tHnrL&scope=read%3Ajira-work%20write%3Ajira-work%20manage%3Ajira-webhook&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2F&state=done&response_type=code&prompt=consent
+
+
+jira token bitcows
+dkxxmWaQXI6UGw1Nl6P6DCB0

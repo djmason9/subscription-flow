@@ -1,0 +1,84 @@
+{
+  "openapi": "3.0.0",
+  "x-stoplight": {
+    "id": "dnafdvdgbjwl2"
+  },
+  "info": {
+    "title": "approver",
+    "version": "1.0",
+    "description": "Marketplace Subscription Approval approver",
+    "contact": {
+      "name": "Leor Brenman",
+      "email": "lbrenman99@hotmail.com",
+      "url": "https://www.leorbrenman.com"
+    },
+    "termsOfService": "https://www.leorbrenman.com",
+    "license": {
+      "name": "NA",
+      "url": "https://www.leorbrenman.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/api",
+      "description": "Localhost"
+    }
+  ],
+  "paths": {
+    "/approver": {
+      "post": {
+        "summary": "",
+        "operationId": "post-approver",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "description": "Approver api",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {}
+  }
+}
