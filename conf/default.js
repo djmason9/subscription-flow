@@ -65,8 +65,8 @@ module.exports = {
     // Note that the sample SSL code below uses the 'fs' and 'path' modules, e.g.:
     ssl: {
         port: 8443,
-        key: fs.readFileSync(path.join('/etc/httpd/conf.d', 'server.key'), 'utf8'),
-        cert: fs.readFileSync(path.join('/etc/httpd/conf.d', 'server.crt'), 'utf8'),
+        key: fs.readFileSync(path.join('/ssh', 'server.key'), 'utf8'),
+        cert: fs.readFileSync(path.join('/ssh', 'server.crt'), 'utf8'),
         passphrase: 'secret'
     },
 
