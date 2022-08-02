@@ -28,7 +28,7 @@ module.exports = {
 
     // This is the base url the service will be reachable at not including the
     // port
-    baseurl: 'https://subapproval.herokuapp.com',
+    baseurl: 'http://localhost',
 
     // Enabling this property will print out the process.env at startup time
     printEnvVars: false,
@@ -45,7 +45,7 @@ module.exports = {
 
         // When this is true, the service will no longer listen on requests over http.
         // Disabling http requires 'ssl' to be configured.
-        disabled: true,
+        disabled: false,
 
         // Controls certain header algorithms.
         headers: {
