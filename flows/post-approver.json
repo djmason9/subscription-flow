@@ -36,9 +36,7 @@
 				{
 					"name": "code",
 					"type": "string",
-					"value": "\"// customfield_10050 = Jira custom field 'Subscription Self Link'\\n  // customfield_10052 = Jira custom field 'Subscription Name'\\n  \\n  let isProject = data.request.body.issue.fields.project.key === data.env.JIRA_PROJECT_KEY;\\n  let isDone = data.request.body.issue.fields.status.name === 'Done';\\n\\n  //https://stackoverflow.com/questions/5515310/is-there-a-standard-function-to-check-for-null-undefined-or-blank-variables-in\\n  let hasSelfLink = false;\\n  if (data.request.body.issue.fields.customfield_10050) {hasSelfLink = true;}\\n  \\n  let hasApprovalSatatus = false;\\n  if (data.request.body.issue.fields.customfield_10049) {hasApprovalSatatus = true;}\\n  \\n  \\n  return isProject && isDone && hasSelfLink && hasApprovalSatatus;\"",
-					"metaName": "Code",
-					"metaDescription": "A JavaScript function body. Supports `await` and returning promises. `data` is the value of the Data parameter. `logger` is the API Builder logger. See the docs for more info: https://docs.axway.com/bundle/api-builder/page/docs/developer_guide/flows/flow_nodes/javascript_flow_node/index.html"
+					"value": "\"// customfield_10050 = Jira custom field 'Subscription Self Link'\\n  // customfield_10052 = Jira custom field 'Subscription Name'\\n  \\n  let isProject = data.request.body.issue.fields.project.key === data.env.JIRA_PROJECT_KEY;\\n  let isDone = data.request.body.issue.fields.status.name === 'Done';\\n\\n  //https://stackoverflow.com/questions/5515310/is-there-a-standard-function-to-check-for-null-undefined-or-blank-variables-in\\n  let hasSelfLink = false;\\n  if (data.request.body.issue.fields.customfield_10050) {hasSelfLink = true;}\\n  \\n  if (data.request.body.issue.fields.customfield_10051 == null) {\\n    data.request.body.issue.fields.customfield_10051 = \\\"\\\";\\n  console.log(\\\"*******************\\\");\\n      console.log(\\\"COMMENT LEFT BLANK\\\");\\n      console.log(\\\"*******************\\\");\\n  }\\n  \\n  let hasApprovalSatatus = false;\\n  if (data.request.body.issue.fields.customfield_10049) {hasApprovalSatatus = true;}\\n  \\n  \\n  return isProject && isDone && hasSelfLink && hasApprovalSatatus;\""
 				}
 			],
 			"outputs": {
@@ -405,7 +403,9 @@
 				{
 					"name": "code",
 					"type": "string",
-					"value": "\"let dataToencode = data.env.JIRA_USERNAME+':'+data.env.JIRA_API_TOKEN;\\n  let buff = new Buffer(dataToencode);\\n  let encodedData = buff.toString('base64');\\n  \\n  let url = data.env.JIRA_URL+'/rest/api/2/issue/'+data.request.body.issue.key+'/comment';\\n  \\n  let headers = {\\n    Authorization : 'Basic '+encodedData,\\n    'Content-Type': 'application/json'\\n  };\\n  \\n  let body = {\\n    body: 'Subscription \\\"'+data.request.body.issue.fields.customfield_10052+'\\\" set to '+data.request.body.issue.fields.customfield_10049.value+' by '+data.request.body.user.displayName+' in Jira and the subscription approval workflow'\\n  };\\n  \\n  return {url, body, headers};\""
+					"value": "\"let dataToencode = data.env.JIRA_USERNAME+':'+data.env.JIRA_API_TOKEN;\\n  let buff = new Buffer(dataToencode);\\n  let encodedData = buff.toString('base64');\\n  \\n  let url = data.env.JIRA_URL+'/rest/api/2/issue/'+data.request.body.issue.key+'/comment';\\n  \\n  let headers = {\\n    Authorization : 'Basic '+encodedData,\\n    'Content-Type': 'application/json'\\n  };\\n  \\n  let body = {\\n    body: 'Subscription \\\"'+data.request.body.issue.fields.customfield_10052+'\\\" set to '+data.request.body.issue.fields.customfield_10049.value+' by '+data.request.body.user.displayName+' in Jira and the subscription approval workflow'\\n  };\\n  \\n  return {url, body, headers};\"",
+					"metaName": "Code",
+					"metaDescription": "A JavaScript function body. Supports `await` and returning promises. `data` is the value of the Data parameter. `logger` is the API Builder logger. See the docs for more info: https://docs.axway.com/bundle/api-builder/page/docs/developer_guide/flows/flow_nodes/javascript_flow_node/index.html"
 				}
 			],
 			"outputs": {
