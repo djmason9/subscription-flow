@@ -1,0 +1,105 @@
+{
+    "openapi": "3.0.0",
+    "x-stoplight": {
+        "id": "kxhbeav2xv1t4"
+    },
+    "info": {
+        "title": "requests",
+        "version": "1.0"
+    },
+    "servers": [{
+        "url": "http://localhost:3000"
+    }],
+    "paths": {
+        "/request": {
+            "parameters": [],
+            "post": {
+                "summary": "Requests",
+                "operationId": "post-requests",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "approvalState": {
+                                        "type": "string"
+                                    },
+                                    "type": {
+                                        "type": "string"
+                                    },
+                                    "subResource": {
+                                        "type": "string"
+                                    },
+                                    "createUserId": {
+                                        "type": "string"
+                                    },
+                                    "appName": {
+                                        "type": "string"
+                                    },
+                                    "references": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "type": {
+                                                    "type": "string"
+                                                },
+                                                "kind": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "x-examples": {
+                                    "example-1": {
+                                        "approvalState": "string",
+                                        "type": "string",
+                                        "subResource": "string",
+                                        "createUserId": "string",
+                                        "references": [{
+                                            "name": "string",
+                                            "type": "string",
+                                            "kind": "string"
+                                        }]
+                                    }
+                                }
+                            },
+                            "examples": {
+                                "example": {
+                                    "value": {
+                                        "approvalState": "string",
+                                        "type": "string",
+                                        "subResource": "string",
+                                        "createUserId": "string",
+                                        "references": [{
+                                            "name": "string",
+                                            "type": "string",
+                                            "kind": "string"
+                                        }]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "description": ""
+            }
+        }
+    },
+    "components": {
+        "schemas": {}
+    }
+}

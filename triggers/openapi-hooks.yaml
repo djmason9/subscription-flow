@@ -1,0 +1,12 @@
+triggers:
+  openapi-hooks-1:
+    name: post-hooks
+    parameters:
+      method: post-hooks
+    enabled: true
+    invoke:
+      flow: post-hooks
+      parameters:
+        request: $.request
+        config: $.config
+        env: $.env

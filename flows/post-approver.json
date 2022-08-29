@@ -19,7 +19,7 @@
 		},
 		"additionalProperties": false
 	},
-	"start": "javascript.1",
+	"start": "invoke-flow.4",
 	"nodes": {
 		"javascript.1": {
 			"type": "nodehandler://@axway/api-builder-plugin-fn-javascript/javascript",
@@ -36,7 +36,9 @@
 				{
 					"name": "code",
 					"type": "string",
-					"value": "\"// customfield_10050 = Jira custom field 'Subscription Self Link'\\n  // customfield_10052 = Jira custom field 'Subscription Name'\\n  \\n  let isProject = data.request.body.issue.fields.project.key === data.env.JIRA_PROJECT_KEY;\\n  let isDone = data.request.body.issue.fields.status.name === 'Done';\\n\\n  //https://stackoverflow.com/questions/5515310/is-there-a-standard-function-to-check-for-null-undefined-or-blank-variables-in\\n  let hasSelfLink = false;\\n  if (data.request.body.issue.fields.customfield_10050) {hasSelfLink = true;}\\n  \\n  if (data.request.body.issue.fields.customfield_10051 == null) {\\n    data.request.body.issue.fields.customfield_10051 = \\\"\\\";\\n  console.log(\\\"*******************\\\");\\n      console.log(\\\"COMMENT LEFT BLANK\\\");\\n      console.log(\\\"*******************\\\");\\n  }\\n  \\n  let hasApprovalSatatus = false;\\n  if (data.request.body.issue.fields.customfield_10049) {hasApprovalSatatus = true;}\\n  \\n  \\n  return isProject && isDone && hasSelfLink && hasApprovalSatatus;\""
+					"value": "\"// customfield_10050 = Jira custom field 'Subscription Self Link'\\n  // customfield_10052 = Jira custom field 'Subscription Name'\\n  \\n  let isProject = data.request.body.issue.fields.project.key === data.env.JIRA_PROJECT_KEY;\\n  let isDone = data.request.body.issue.fields.status.name === 'Done';\\n  \\n  let self_link_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_SELF_LINK_FIELD_NAME).key;\\n  let app_picker_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_APP_PICKER_FIELD_NAME).key;\\n\\n  //https://stackoverflow.com/questions/5515310/is-there-a-standard-function-to-check-for-null-undefined-or-blank-variables-in\\n  let hasSelfLink = false;\\n  if (data.request.body.issue.fields[self_link_fieldname]) {hasSelfLink = true;}\\n  \\n  let hasApprovalSatatus = false;\\n  if (data.request.body.issue.fields[app_picker_fieldname] && data.request.body.issue.fields[app_picker_fieldname].value) {hasApprovalSatatus = true;}\\n  \\n    console.log(\\\"****** checkValid ********\\\\n\\\\n\\\");\\n    console.log(isProject,isDone,hasSelfLink,hasApprovalSatatus);\\n    console.log(\\\"**************\\\\n\\\\n\\\");\\n  \\n  return isProject && isDone && hasSelfLink && hasApprovalSatatus;\"",
+					"metaName": "Code",
+					"metaDescription": "A JavaScript function body. Supports `await` and returning promises. `data` is the value of the Data parameter. `logger` is the API Builder logger. See the docs for more info: https://docs.axway.com/bundle/api-builder/page/docs/developer_guide/flows/flow_nodes/javascript_flow_node/index.html"
 				}
 			],
 			"outputs": {
@@ -78,112 +80,20 @@
 			"outputs": {
 				"true": {
 					"routes": [
-						"javascript.2"
+						"invoke-flow.2"
 					],
 					"context": "$.equals",
 					"metaName": "True"
 				},
 				"false": {
-					"routes": [],
+					"routes": [
+						"http.2"
+					],
 					"context": "$.equals",
 					"metaName": "False"
 				}
 			},
 			"metaMethod": "Equals"
-		},
-		"javascript.2": {
-			"type": "nodehandler://@axway/api-builder-plugin-fn-javascript/javascript",
-			"name": "prepareGetToken",
-			"method": "Execute",
-			"parameters": [
-				{
-					"name": "data",
-					"type": "jsonpath",
-					"value": "$",
-					"metaName": "Data",
-					"metaDescription": "The value to apply as the `data` argument of the JavaScript code. For objects and arrays, `data` is passed by reference."
-				},
-				{
-					"name": "code",
-					"type": "string",
-					"value": "\"let dataToencode = data.env.CLIENT_ID+':'+data.env.CLIENT_SECRET;\\n  let buff = new Buffer(dataToencode);\\n  let encodedData = buff.toString('base64');\\n \\n  let url = 'https://login.axway.com/auth/realms/Broker/protocol/openid-connect/token';\\n  let headers = {\\n    Authorization : 'Basic '+encodedData,\\n   'Content-Type': 'application/x-www-form-urlencoded'\\n  };\\n  let body = {\\n    grant_type: 'client_credentials'\\n  };\\n \\n return {url,headers,body};\"",
-					"metaName": "Code",
-					"metaDescription": "A JavaScript function body. Supports `await` and returning promises. `data` is the value of the Data parameter. `logger` is the API Builder logger. See the docs for more info: https://docs.axway.com/bundle/api-builder/page/docs/developer_guide/flows/flow_nodes/javascript_flow_node/index.html"
-				}
-			],
-			"outputs": {
-				"next": {
-					"context": "$.result",
-					"routes": [
-						"rest.1"
-					],
-					"metaName": "Next"
-				},
-				"error": {
-					"context": "$.error",
-					"routes": [],
-					"metaName": "Error"
-				}
-			},
-			"metaMethod": "Execute"
-		},
-		"rest.1": {
-			"type": "nodehandler://@axway/api-builder-plugin-fn-restclient/rest",
-			"name": "getToken",
-			"method": "post",
-			"parameters": [
-				{
-					"name": "body",
-					"type": "jsonpath",
-					"value": "$.result.body",
-					"metaName": "Body",
-					"metaDescription": "The content to send."
-				},
-				{
-					"name": "url",
-					"type": "jsonpath",
-					"value": "$.result.url",
-					"metaName": "URL",
-					"metaDescription": "The target URL."
-				},
-				{
-					"name": "headers",
-					"type": "jsonpath",
-					"value": "$.result.headers",
-					"metaName": "Headers",
-					"metaDescription": "The HTTP headers to set."
-				}
-			],
-			"outputs": {
-				"2xx": {
-					"routes": [
-						"javascript.3"
-					],
-					"context": "$.getTokenResponse",
-					"metaName": "2XX"
-				},
-				"3xx": {
-					"routes": [],
-					"context": "$.response",
-					"metaName": "3XX"
-				},
-				"4xx": {
-					"routes": [],
-					"context": "$.response",
-					"metaName": "4XX"
-				},
-				"5xx": {
-					"routes": [],
-					"context": "$.response",
-					"metaName": "5XX"
-				},
-				"error": {
-					"routes": [],
-					"context": "$.error",
-					"metaName": "Error"
-				}
-			},
-			"metaMethod": "POST"
 		},
 		"javascript.3": {
 			"type": "nodehandler://@axway/api-builder-plugin-fn-javascript/javascript",
@@ -200,7 +110,7 @@
 				{
 					"name": "code",
 					"type": "string",
-					"value": "\"let url = data.request.body.issue.fields.customfield_10050;\\n   let headers = {\\n     'Content-Type': 'application/json',\\n     Authorization: 'Bearer '+data.getTokenResponse.body.access_token\\n   };\\n  \\n  \\tlet approvalStatus = 'rejected';\\n  \\n  \\tif(data.request.body.issue.fields.customfield_10049.value === 'Approve') {\\n       approvalStatus = 'approved';\\n    }\\n  \\n   let body = {\\n      \\\"approval\\\": {\\n      \\\"state\\\": approvalStatus,\\n      \\\"reason\\\": data.request.body.issue.fields.customfield_10051\\n      }\\n   };\\n   return {url,headers,body};\"",
+					"value": "\"let self_link_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_SELF_LINK_FIELD_NAME).key;\\n  let app_comment_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_APP_COMMENT_FIELD_NAME).key;\\n  let app_picker_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_APP_PICKER_FIELD_NAME).key;\\n  \\n  let url = data.request.body.issue.fields[self_link_fieldname];\\n  \\n  let approvalStatus = 'rejected';\\n \\n  if(data.request.body.issue.fields[app_picker_fieldname].value === 'Approve') {\\n     approvalStatus = 'approved';\\n  }\\n  \\n  //https://stackoverflow.com/questions/5515310/is-there-a-standard-function-to-check-for-null-undefined-or-blank-variables-in\\n  let reason = '';\\n  if (data.request.body.issue.fields[app_comment_fieldname]) {\\n    reason = data.request.body.issue.fields[app_comment_fieldname];\\n  }\\n  \\n  console.log(\\\"**************\\\\n\\\\n\\\");\\n    console.log(approvalStatus,reason);\\n    console.log(\\\"**************\\\\n\\\\n\\\");\\n  \\n  \\n   let body = {\\n      \\\"approval\\\": {\\n      \\\"state\\\": {\\n        \\\"name\\\":approvalStatus,\\n      \\t\\\"reason\\\": reason\\n      \\t}\\n      }\\n   };\\n   return {url,body};\"",
 					"metaName": "Code",
 					"metaDescription": "A JavaScript function body. Supports `await` and returning promises. `data` is the value of the Data parameter. `logger` is the API Builder logger. See the docs for more info: https://docs.axway.com/bundle/api-builder/page/docs/developer_guide/flows/flow_nodes/javascript_flow_node/index.html"
 				}
@@ -243,7 +153,7 @@
 				{
 					"name": "headers",
 					"type": "jsonpath",
-					"value": "$.result.headers",
+					"value": "$.flowResponse",
 					"metaName": "Headers",
 					"metaDescription": "The HTTP headers to set."
 				}
@@ -287,7 +197,7 @@
 				{
 					"name": "status",
 					"type": "number",
-					"value": "200",
+					"value": "204",
 					"metaName": "Status",
 					"metaDescription": "The HTTP status code"
 				}
@@ -316,7 +226,7 @@
 				{
 					"name": "code",
 					"type": "string",
-					"value": "\"let url=data.env.MS_TEAMS_WEBHOOK_URL;\\n  \\n  let body = {\\n    text: 'Subscription \\\"'+data.request.body.issue.fields.customfield_10052+'\\\" set to '+data.request.body.issue.fields.customfield_10049.value+' by '+data.request.body.user.displayName+' in Jira'\\n  };\\n  \\n  return {url,body};\"",
+					"value": "\"let url=data.env.MS_TEAMS_WEBHOOK_URL;\\n  \\n  let app_comment_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_APP_COMMENT_FIELD_NAME).key;\\n  let subs_name_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_NAME_FIELD_NAME).key;\\n  let app_picker_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_APP_PICKER_FIELD_NAME).key;\\n  \\n    let body = {\\n    text: `Access Request '${data.request.body.issue.fields[subs_name_fieldname]}' set to ${data.request.body.issue.fields[app_picker_fieldname].value} by ${data.request.body.user.displayName} in Jira and the access request workflow. Comments: ${data.request.body.issue.fields[app_comment_fieldname]}`\\n       \\n  };\\n   \\n  return {url,body};\"",
 					"metaName": "Code",
 					"metaDescription": "A JavaScript function body. Supports `await` and returning promises. `data` is the value of the Data parameter. `logger` is the API Builder logger. See the docs for more info: https://docs.axway.com/bundle/api-builder/page/docs/developer_guide/flows/flow_nodes/javascript_flow_node/index.html"
 				}
@@ -360,7 +270,7 @@
 			"outputs": {
 				"2xx": {
 					"routes": [
-						"javascript.5"
+						"invoke-flow.1"
 					],
 					"context": "$.response",
 					"metaName": "2XX"
@@ -403,7 +313,7 @@
 				{
 					"name": "code",
 					"type": "string",
-					"value": "\"let dataToencode = data.env.JIRA_USERNAME+':'+data.env.JIRA_API_TOKEN;\\n  let buff = new Buffer(dataToencode);\\n  let encodedData = buff.toString('base64');\\n  \\n  let url = data.env.JIRA_URL+'/rest/api/2/issue/'+data.request.body.issue.key+'/comment';\\n  \\n  let headers = {\\n    Authorization : 'Basic '+encodedData,\\n    'Content-Type': 'application/json'\\n  };\\n  \\n  let body = {\\n    body: 'Subscription \\\"'+data.request.body.issue.fields.customfield_10052+'\\\" set to '+data.request.body.issue.fields.customfield_10049.value+' by '+data.request.body.user.displayName+' in Jira and the subscription approval workflow'\\n  };\\n  \\n  return {url, body, headers};\"",
+					"value": "\"let url = data.env.JIRA_URL+'/rest/api/2/issue/'+data.request.body.issue.key+'/comment';\\n  \\n  let app_comment_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_APP_COMMENT_FIELD_NAME).key;\\n  let subs_name_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_NAME_FIELD_NAME).key;\\n  let app_picker_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_APP_PICKER_FIELD_NAME).key;\\n  \\n  let body = {\\n    body: `Access Request ${data.request.body.issue.fields[subs_name_fieldname]} \\n    set to ${data.request.body.issue.fields[app_picker_fieldname].value} by \\n    ${data.request.body.user.displayName} in Jira and the access request workflow. \\n    Comments: ${data.request.body.issue.fields[app_comment_fieldname]}`\\n  };\\n  \\n  return {url, body};\"",
 					"metaName": "Code",
 					"metaDescription": "A JavaScript function body. Supports `await` and returning promises. `data` is the value of the Data parameter. `logger` is the API Builder logger. See the docs for more info: https://docs.axway.com/bundle/api-builder/page/docs/developer_guide/flows/flow_nodes/javascript_flow_node/index.html"
 				}
@@ -446,7 +356,7 @@
 				{
 					"name": "headers",
 					"type": "jsonpath",
-					"value": "$.result.headers",
+					"value": "$.prepareJiraHeadersFlowResponse",
 					"metaName": "Headers",
 					"metaDescription": "The HTTP headers to set."
 				}
@@ -481,6 +391,262 @@
 				}
 			},
 			"metaMethod": "POST"
+		},
+		"invoke-flow.1": {
+			"type": "nodehandler://@axway/api-builder-plugin-invoke-flow/invoke-flow",
+			"name": "prepareJiraHeaders",
+			"method": "invokeFlow",
+			"parameters": [
+				{
+					"name": "id",
+					"type": "string",
+					"value": "\"prepareJiraHeaders\"",
+					"metaName": "Flow Listener ID",
+					"metaDescription": "The ID of a previously configured `Flow Listener`."
+				}
+			],
+			"outputs": {
+				"next": {
+					"routes": [
+						"javascript.5"
+					],
+					"context": "$.prepareJiraHeadersFlowResponse",
+					"metaName": "Next"
+				},
+				"error": {
+					"routes": [],
+					"context": "$.error",
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "Invoke Flow"
+		},
+		"invoke-flow.2": {
+			"type": "nodehandler://@axway/api-builder-plugin-invoke-flow/invoke-flow",
+			"name": "getAmplifyAPIHeaders",
+			"method": "invokeFlow",
+			"parameters": [
+				{
+					"name": "id",
+					"type": "string",
+					"value": "\"getAmplifyAPIHeaders\"",
+					"metaName": "Flow Listener ID",
+					"metaDescription": "The ID of a previously configured `Flow Listener`."
+				}
+			],
+			"outputs": {
+				"next": {
+					"routes": [
+						"javascript.3"
+					],
+					"context": "$.flowResponse",
+					"metaName": "Next"
+				},
+				"error": {
+					"routes": [],
+					"context": "$.error",
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "Invoke Flow"
+		},
+		"invoke-flow.4": {
+			"type": "nodehandler://@axway/api-builder-plugin-invoke-flow/invoke-flow",
+			"name": "getJiraFields",
+			"method": "invokeFlow",
+			"parameters": [
+				{
+					"name": "id",
+					"type": "string",
+					"value": "\"getJiraFields\"",
+					"metaName": "Flow Listener ID",
+					"metaDescription": "The ID of a previously configured `Flow Listener`."
+				}
+			],
+			"outputs": {
+				"next": {
+					"routes": [
+						"javascript.1"
+					],
+					"context": "$.getJiraFieldsFlowResponse",
+					"metaName": "Next"
+				},
+				"error": {
+					"routes": [],
+					"context": "$.error",
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "Invoke Flow"
+		},
+		"http.2": {
+			"type": "nodehandler://axway-flow/http",
+			"name": "Set HTTP Response",
+			"method": "setresponse",
+			"parameters": [
+				{
+					"name": "status",
+					"type": "number",
+					"value": "400",
+					"metaName": "Status",
+					"metaDescription": "The HTTP status code"
+				}
+			],
+			"outputs": {
+				"next": {
+					"context": "$.response",
+					"routes": [],
+					"metaName": "Next"
+				}
+			},
+			"metaMethod": "Set HTTP Response"
+		},
+		"rest.1": {
+			"type": "nodehandler://@axway/api-builder-plugin-fn-restclient/rest",
+			"name": "deleteAccessRequest",
+			"method": "delete",
+			"parameters": [
+				{
+					"name": "url",
+					"type": "jsonpath",
+					"value": "$.rejected.url",
+					"metaName": "URL",
+					"metaDescription": "The target URL."
+				},
+				{
+					"name": "headers",
+					"type": "jsonpath",
+					"value": "$.flowResponse",
+					"metaName": "Headers",
+					"metaDescription": "The HTTP headers to set."
+				}
+			],
+			"outputs": {
+				"2xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "2XX"
+				},
+				"3xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "3XX"
+				},
+				"4xx": {
+					"routes": [
+						"http.3"
+					],
+					"context": "$.response",
+					"metaName": "4XX"
+				},
+				"5xx": {
+					"routes": [],
+					"context": "$.response",
+					"metaName": "5XX"
+				},
+				"error": {
+					"routes": [
+						"http.3"
+					],
+					"context": "$.error",
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "DELETE"
+		},
+		"javascript.2": {
+			"type": "nodehandler://@axway/api-builder-plugin-fn-javascript/javascript",
+			"name": "prepareReject",
+			"method": "Execute",
+			"parameters": [
+				{
+					"name": "code",
+					"type": "string",
+					"value": "\"let self_link_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_SELF_LINK_FIELD_NAME).key;\\n  let app_picker_fieldname = data.getJiraFieldsFlowResponse.find(c => c.name === data.env.JIRA_SUBS_APP_PICKER_FIELD_NAME).key;\\n  let url = data.request.body.issue.fields[self_link_fieldname];\\n  \\n  url = url.substr(0,url.indexOf(\\\"/approval\\\"));\\n  console.log(\\\"****** DELETE ******\\\\n\\\");\\n    console.log(url,data.request.body.issue.fields[app_picker_fieldname].value);\\n    console.log(\\\"************\\\\n\\\");\\n  \\n  if(data.request.body.issue.fields[app_picker_fieldname].value === 'Reject') {\\n    return {url:url,reject:true};\\n  }\\n  \\n  return false;\"",
+					"metaName": "Code",
+					"metaDescription": "A JavaScript function body. Supports `await` and returning promises. `data` is the value of the Data parameter. `logger` is the API Builder logger. See the docs for more info: https://docs.axway.com/bundle/api-builder/page/docs/developer_guide/flows/flow_nodes/javascript_flow_node/index.html"
+				},
+				{
+					"name": "data",
+					"type": "jsonpath",
+					"value": "$",
+					"metaName": "Data",
+					"metaDescription": "The value to apply as the `data` argument of the JavaScript code. For objects and arrays, `data` is passed by reference."
+				}
+			],
+			"outputs": {
+				"next": {
+					"context": "$.rejected",
+					"routes": [
+						"condition.2"
+					],
+					"metaName": "Next"
+				},
+				"error": {
+					"context": "$.error",
+					"routes": [],
+					"metaName": "Error"
+				}
+			},
+			"metaMethod": "Execute"
+		},
+		"condition.2": {
+			"type": "nodehandler://axway-flow/condition",
+			"name": "Equals",
+			"method": "equals",
+			"parameters": [
+				{
+					"name": "value",
+					"type": "boolean",
+					"value": "true",
+					"metaName": "Value",
+					"metaDescription": "The value to test input against."
+				},
+				{
+					"name": "source",
+					"type": "jsonpath",
+					"value": "$.rejected.reject",
+					"metaName": "Source",
+					"metaDescription": "The input to test."
+				}
+			],
+			"outputs": {
+				"true": {
+					"routes": [
+						"rest.1"
+					],
+					"context": "$.equals",
+					"metaName": "True"
+				},
+				"false": {
+					"routes": [],
+					"context": "$.equals",
+					"metaName": "False"
+				}
+			},
+			"metaMethod": "Equals"
+		},
+		"http.3": {
+			"type": "nodehandler://axway-flow/http",
+			"name": "Set HTTP Response",
+			"method": "setresponse",
+			"parameters": [
+				{
+					"name": "status",
+					"type": "number",
+					"value": "400",
+					"metaName": "Status",
+					"metaDescription": "The HTTP status code"
+				}
+			],
+			"outputs": {
+				"next": {
+					"context": "$.response",
+					"routes": [],
+					"metaName": "Next"
+				}
+			},
+			"metaMethod": "Set HTTP Response"
 		}
 	}
 }

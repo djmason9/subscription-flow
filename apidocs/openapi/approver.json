@@ -1,84 +1,350 @@
 {
-  "openapi": "3.0.0",
-  "x-stoplight": {
-    "id": "dnafdvdgbjwl2"
-  },
-  "info": {
-    "title": "approver",
-    "version": "1.0",
-    "description": "Marketplace Subscription Approval approver",
-    "contact": {
-      "name": "Leor Brenman",
-      "email": "lbrenman99@hotmail.com",
-      "url": "https://www.leorbrenman.com"
+    "openapi": "3.0.0",
+    "x-stoplight": {
+        "id": "dnafdvdgbjwl2"
     },
-    "termsOfService": "https://www.leorbrenman.com",
-    "license": {
-      "name": "NA",
-      "url": "https://www.leorbrenman.com"
-    }
-  },
-  "servers": [
-    {
-      "url": "http://localhost:8080/api",
-      "description": "Localhost"
-    }
-  ],
-  "paths": {
-    "/approver": {
-      "post": {
-        "summary": "",
-        "operationId": "post-approver",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {}
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {}
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {}
-                }
-              }
-            }
-          }
+    "info": {
+        "title": "approver",
+        "version": "1.0",
+        "description": "Marketplace Subscription Approval approver",
+        "contact": {
+            "name": "Leor Brenman",
+            "email": "lbrenman99@hotmail.com",
+            "url": "https://www.leorbrenman.com"
         },
-        "description": "Approver api",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          }
+        "termsOfService": "https://www.leorbrenman.com",
+        "license": {
+            "name": "NA",
+            "url": "https://www.leorbrenman.com"
         }
-      }
+    },
+    "servers": [{
+        "url": "http://localhost:8080/api",
+        "description": "Localhost"
+    }],
+    "paths": {
+        "/approver": {
+            "post": {
+                "summary": "",
+                "operationId": "post-approver",
+                "responses": {
+                    "204": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "description": "Approver api",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/JiraWebhookIssueUpdateBody"
+                            },
+                            "examples": {
+                                "example-1": {
+                                    "value": {
+                                        "timestamp": 1659632305737,
+                                        "webhookEvent": "jira:issue_updated",
+                                        "issue_event_type_name": "issue_updated",
+                                        "user": {
+                                            "self": "https://leorbrenman.atlassian.net/rest/api/2/user?accountId=5ac65324cf8dc659b8f1cd98",
+                                            "accountId": "5ac65324cf8dc659b8f1cd98",
+                                            "avatarUrls": {
+                                                "48x48": "https://secure.gravatar.com/avatar/1b1a0dbe24cb0063183864de6297fd37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FLB-5.png",
+                                                "24x24": "https://secure.gravatar.com/avatar/1b1a0dbe24cb0063183864de6297fd37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FLB-5.png",
+                                                "16x16": "https://secure.gravatar.com/avatar/1b1a0dbe24cb0063183864de6297fd37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FLB-5.png",
+                                                "32x32": "https://secure.gravatar.com/avatar/1b1a0dbe24cb0063183864de6297fd37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FLB-5.png"
+                                            },
+                                            "displayName": "Leor Brenman",
+                                            "active": true,
+                                            "timeZone": "America/New_York",
+                                            "accountType": "atlassian"
+                                        },
+                                        "issue": {
+                                            "id": "10043",
+                                            "self": "https://leorbrenman.atlassian.net/rest/api/2/10043",
+                                            "key": "MSR-40",
+                                            "fields": {
+                                                "statuscategorychangedate": "2022-08-04T12:49:11.350-0400",
+                                                "issuetype": {
+                                                    "self": "https://leorbrenman.atlassian.net/rest/api/2/issuetype/10008",
+                                                    "id": "10008",
+                                                    "description": "Request to do something",
+                                                    "iconUrl": "https://leorbrenman.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10306?size=medium",
+                                                    "name": "Demand",
+                                                    "subtask": false,
+                                                    "avatarId": 10306,
+                                                    "hierarchyLevel": 0
+                                                },
+                                                "timespent": null,
+                                                "customfield_10030": null,
+                                                "project": {
+                                                    "self": "https://leorbrenman.atlassian.net/rest/api/2/project/10001",
+                                                    "id": "10001",
+                                                    "key": "MSR",
+                                                    "name": "Marketplace Subscription Requests",
+                                                    "projectTypeKey": "software",
+                                                    "simplified": false,
+                                                    "avatarUrls": {
+                                                        "48x48": "https://leorbrenman.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10404",
+                                                        "24x24": "https://leorbrenman.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10404?size=small",
+                                                        "16x16": "https://leorbrenman.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10404?size=xsmall",
+                                                        "32x32": "https://leorbrenman.atlassian.net/rest/api/2/universal_avatar/view/type/project/avatar/10404?size=medium"
+                                                    }
+                                                },
+                                                "customfield_10031": null,
+                                                "customfield_10032": null,
+                                                "fixVersions": [],
+                                                "customfield_10034": "Good Luck",
+                                                "aggregatetimespent": null,
+                                                "resolution": {
+                                                    "self": "https://leorbrenman.atlassian.net/rest/api/2/resolution/10000",
+                                                    "id": "10000",
+                                                    "description": "Work has been completed on this issue.",
+                                                    "name": "Done"
+                                                },
+                                                "customfield_10035": {
+                                                    "self": "https://leorbrenman.atlassian.net/rest/api/2/customFieldOption/10020",
+                                                    "value": "Approve",
+                                                    "id": "10020"
+                                                },
+                                                "customfield_10036": "Default Team - subscription for Finance Starter - 1",
+                                                "customfield_10037": "https://apicentral.axway.com/apis/catalog/v1alpha1/subscriptions/default-team-subscription-for-finance-starter-1/approval",
+                                                "customfield_10029": null,
+                                                "resolutiondate": "2022-08-04T12:49:11.343-0400",
+                                                "workratio": -1,
+                                                "watches": {
+                                                    "self": "https://leorbrenman.atlassian.net/rest/api/2/issue/MSR-40/watchers",
+                                                    "watchCount": 1,
+                                                    "isWatching": true
+                                                },
+                                                "lastViewed": "2022-08-04T12:48:08.594-0400",
+                                                "issuerestriction": {
+                                                    "issuerestrictions": {},
+                                                    "shouldDisplay": false
+                                                },
+                                                "created": "2022-08-04T12:47:53.979-0400",
+                                                "customfield_10020": null,
+                                                "customfield_10021": null,
+                                                "customfield_10022": null,
+                                                "priority": {
+                                                    "self": "https://leorbrenman.atlassian.net/rest/api/2/priority/3",
+                                                    "iconUrl": "https://leorbrenman.atlassian.net/images/icons/priorities/medium.svg",
+                                                    "name": "Medium",
+                                                    "id": "3"
+                                                },
+                                                "customfield_10023": null,
+                                                "customfield_10024": null,
+                                                "customfield_10025": "10000_*:*_1_*:*_77392_*|*_10002_*:*_1_*:*_0",
+                                                "labels": [],
+                                                "customfield_10016": null,
+                                                "customfield_10017": null,
+                                                "customfield_10018": {
+                                                    "hasEpicLinkFieldDependency": false,
+                                                    "showField": false,
+                                                    "nonEditableReason": {
+                                                        "reason": "PLUGIN_LICENSE_ERROR",
+                                                        "message": "The Parent Link is only available to Jira Premium users."
+                                                    }
+                                                },
+                                                "customfield_10019": "0|hzzzzz:",
+                                                "aggregatetimeoriginalestimate": null,
+                                                "timeestimate": null,
+                                                "versions": [],
+                                                "issuelinks": [],
+                                                "assignee": null,
+                                                "updated": "2022-08-04T12:58:25.731-0400",
+                                                "status": {
+                                                    "self": "https://leorbrenman.atlassian.net/rest/api/2/status/10002",
+                                                    "description": "",
+                                                    "iconUrl": "https://leorbrenman.atlassian.net/",
+                                                    "name": "Done",
+                                                    "id": "10002",
+                                                    "statusCategory": {
+                                                        "self": "https://leorbrenman.atlassian.net/rest/api/2/statuscategory/3",
+                                                        "id": 3,
+                                                        "key": "done",
+                                                        "colorName": "green",
+                                                        "name": "Complete"
+                                                    }
+                                                },
+                                                "components": [],
+                                                "timeoriginalestimate": null,
+                                                "description": "A marketplace product subscription request has been made. Details are below:\r\rSubscription: Default Team - subscription for Finance Starter - 1\rSubscription Link: https://apicentral.axway.com/marketplace/subscriptions\rProduct: finance-starter\rProduct Link: https://apicentral.axway.com/products/details/finance-starter\rRequestor: Leor Brenman\rRequestor E-mail: lbrenman@appcelerator.com\rOrganization: Axway Appcelerator SE\rOrganization Link: https://platform.axway.com/org/100000142\rTeam: Default Team\rTeam Link: https://platform.axway.com/org/team/e4ec6c1a69fd0b8e016a22c82fc9170c\r\rIn order to approve or reject the subscription request, set the Approve/Reject field, add a comment/reason and close the incident.\r\rYou can review the susbscription request here:\nhttps://apicentral.axway.com/marketplace/subscriptions\n\n",
+                                                "customfield_10010": null,
+                                                "customfield_10014": null,
+                                                "customfield_10015": null,
+                                                "timetracking": {},
+                                                "customfield_10005": null,
+                                                "customfield_10006": null,
+                                                "security": null,
+                                                "customfield_10007": null,
+                                                "customfield_10008": null,
+                                                "aggregatetimeestimate": null,
+                                                "customfield_10009": null,
+                                                "attachment": [],
+                                                "summary": "Marketplace product subscription approval request: Default Team - subscription for Finance Starter - 1",
+                                                "creator": {
+                                                    "self": "https://leorbrenman.atlassian.net/rest/api/2/user?accountId=5ac65324cf8dc659b8f1cd98",
+                                                    "accountId": "5ac65324cf8dc659b8f1cd98",
+                                                    "avatarUrls": {
+                                                        "48x48": "https://secure.gravatar.com/avatar/1b1a0dbe24cb0063183864de6297fd37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FLB-5.png",
+                                                        "24x24": "https://secure.gravatar.com/avatar/1b1a0dbe24cb0063183864de6297fd37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FLB-5.png",
+                                                        "16x16": "https://secure.gravatar.com/avatar/1b1a0dbe24cb0063183864de6297fd37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FLB-5.png",
+                                                        "32x32": "https://secure.gravatar.com/avatar/1b1a0dbe24cb0063183864de6297fd37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FLB-5.png"
+                                                    },
+                                                    "displayName": "Leor Brenman",
+                                                    "active": true,
+                                                    "timeZone": "America/New_York",
+                                                    "accountType": "atlassian"
+                                                },
+                                                "subtasks": [],
+                                                "customfield_10040": null,
+                                                "customfield_10041": null,
+                                                "customfield_10042": null,
+                                                "reporter": {
+                                                    "self": "https://leorbrenman.atlassian.net/rest/api/2/user?accountId=5ac65324cf8dc659b8f1cd98",
+                                                    "accountId": "5ac65324cf8dc659b8f1cd98",
+                                                    "avatarUrls": {
+                                                        "48x48": "https://secure.gravatar.com/avatar/1b1a0dbe24cb0063183864de6297fd37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FLB-5.png",
+                                                        "24x24": "https://secure.gravatar.com/avatar/1b1a0dbe24cb0063183864de6297fd37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FLB-5.png",
+                                                        "16x16": "https://secure.gravatar.com/avatar/1b1a0dbe24cb0063183864de6297fd37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FLB-5.png",
+                                                        "32x32": "https://secure.gravatar.com/avatar/1b1a0dbe24cb0063183864de6297fd37?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FLB-5.png"
+                                                    },
+                                                    "displayName": "Leor Brenman",
+                                                    "active": true,
+                                                    "timeZone": "America/New_York",
+                                                    "accountType": "atlassian"
+                                                },
+                                                "aggregateprogress": {
+                                                    "progress": 0,
+                                                    "total": 0
+                                                },
+                                                "customfield_10001": null,
+                                                "customfield_10002": null,
+                                                "customfield_10003": null,
+                                                "customfield_10004": null,
+                                                "customfield_10038": [],
+                                                "customfield_10039": null,
+                                                "environment": null,
+                                                "duedate": null,
+                                                "progress": {
+                                                    "progress": 0,
+                                                    "total": 0
+                                                },
+                                                "votes": {
+                                                    "self": "https://leorbrenman.atlassian.net/rest/api/2/issue/MSR-40/votes",
+                                                    "votes": 0,
+                                                    "hasVoted": false
+                                                }
+                                            }
+                                        },
+                                        "changelog": {
+                                            "id": "10132",
+                                            "items": [{
+                                                "field": "Subscription Approval Picker",
+                                                "fieldtype": "custom",
+                                                "fieldId": "customfield_10035",
+                                                "from": null,
+                                                "fromString": null,
+                                                "to": "10020",
+                                                "toString": "Approve"
+                                            }]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "description": ""
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "JiraWebhookIssueUpdateBody": {
+                "title": "jiraWebhookIssueUpdateBody",
+                "x-stoplight": {
+                    "id": "abb9sfvkxayj7"
+                },
+                "type": "object",
+                "properties": {
+                    "timestamp": {
+                        "type": "integer"
+                    },
+                    "webhookEvent": {
+                        "type": "string"
+                    },
+                    "issue_event_type_name": {
+                        "type": "string"
+                    },
+                    "user": {
+                        "type": "object",
+                        "properties": {
+                            "self": {
+                                "type": "string",
+                                "format": "uri"
+                            },
+                            "accountId": {
+                                "type": "string"
+                            },
+                            "displayName": {
+                                "type": "string"
+                            },
+                            "active": {
+                                "type": "boolean"
+                            },
+                            "timeZone": {
+                                "type": "string"
+                            },
+                            "accountType": {
+                                "type": "string"
+                            },
+                            "avatarUrls": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "issue": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "self": {
+                                "type": "string",
+                                "format": "uri"
+                            },
+                            "key": {
+                                "type": "string"
+                            },
+                            "fields": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "changelog": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
-  },
-  "components": {
-    "schemas": {}
-  }
 }

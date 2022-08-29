@@ -1,0 +1,12 @@
+triggers:
+  openapi-requests-1:
+    name: post-requests
+    parameters:
+      method: post-requests
+    enabled: true
+    invoke:
+      flow: post-requests
+      parameters:
+        request: $.request
+        config: $.config
+        env: $.env

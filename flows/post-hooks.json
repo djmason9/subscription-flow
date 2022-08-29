@@ -1,0 +1,112 @@
+{
+    "schemaVersion": "4",
+    "info": {
+        "name": "post-hooks"
+    },
+    "parameter": {
+        "properties": {
+            "request": {
+                "description": "The hook"
+            },
+            "config": {
+                "type": "object",
+                "description": "The service's configuration"
+            },
+            "env": {
+                "type": "object",
+                "description": "The host OS environment"
+            }
+        },
+        "additionalProperties": false
+    },
+    "start": "javascript.1",
+    "nodes": {
+        "javascript.1": {
+            "type": "nodehandler://@axway/api-builder-plugin-fn-javascript/javascript",
+            "name": "Execute",
+            "method": "Execute",
+            "parameters": [
+                {
+                    "name": "data",
+                    "type": "jsonpath",
+                    "value": "$",
+                    "metaName": "Data",
+                    "metaDescription": "The value to apply as the `data` argument of the JavaScript code. For objects and arrays, `data` is passed by reference."
+                },
+                {
+                    "name": "code",
+                    "type": "string",
+                    "value": "\"let body = data.request.body;\\n    let refs = body.payload.metadata.references;\\n    let references = [];\\n    refs.forEach(ref => {\\n        references.push({\\n            \\\"name\\\": ref.name,\\n            \\\"type\\\": ref.type,\\n            \\\"kind\\\": ref.kind\\n        });\\n    });\\n    return {\\n        \\\"approvalState\\\": body.payload.approval.state.name,\\n        \\\"type\\\": body.type,\\n      \\\"organization\\\":body.organization.id,\\n      \\\"approvalLink\\\": body.payload.metadata.selfLink,\\n     \\\"apiOwner\\\": body.payload.owner.id,\\n      \\\"consumerCI\\\":body.payload.metadata.scope.name,\\n        \\\"subResource\\\": body.metadata.subresource,\\n        \\\"createUserId\\\": body.payload.metadata.audit.createUserId,\\n        \\\"references\\\": references\\n \\n    };\""
+                }
+            ],
+            "outputs": {
+                "next": {
+                    "context": "$.resp",
+                    "routes": [
+                        "http.2"
+                    ],
+                    "metaName": "Next"
+                },
+                "error": {
+                    "context": "$.error",
+                    "routes": [
+                        "http.1"
+                    ],
+                    "metaName": "Error"
+                }
+            },
+            "metaMethod": "Execute"
+        },
+        "http.1": {
+            "type": "nodehandler://axway-flow/http",
+            "name": "Set HTTP Response",
+            "method": "setresponse",
+            "parameters": [
+                {
+                    "name": "status",
+                    "type": "number",
+                    "value": "400",
+                    "metaName": "Status",
+                    "metaDescription": "The HTTP status code"
+                }
+            ],
+            "outputs": {
+                "next": {
+                    "context": "$.response",
+                    "routes": [],
+                    "metaName": "Next"
+                }
+            },
+            "metaMethod": "Set HTTP Response"
+        },
+        "http.2": {
+            "type": "nodehandler://axway-flow/http",
+            "name": "Set HTTP Response",
+            "method": "setresponse",
+            "parameters": [
+                {
+                    "name": "status",
+                    "type": "number",
+                    "value": "200",
+                    "metaName": "Status",
+                    "metaDescription": "The HTTP status code"
+                },
+                {
+                    "name": "body",
+                    "type": "jsonpath",
+                    "value": "$.resp",
+                    "metaName": "Body",
+                    "metaDescription": "The response payload"
+                }
+            ],
+            "outputs": {
+                "next": {
+                    "context": "$.response",
+                    "routes": [],
+                    "metaName": "Next"
+                }
+            },
+            "metaMethod": "Set HTTP Response"
+        }
+    }
+}

@@ -1,0 +1,34 @@
+triggers:
+  flow-listener-1:
+    name: Flow Listener
+    parameters:
+      id: prepareJiraHeaders
+    enabled: true
+    invoke:
+      flow: prepareJiraHeaders
+      parameters:
+        request: $.request
+        config: $.config
+        env: $.env
+  flow-listener-2:
+    name: getAmplifyAPIHeaders
+    parameters:
+      id: getAmplifyAPIHeaders
+    enabled: true
+    invoke:
+      flow: getAmplifyAPIHeaders
+      parameters:
+        request: $.request
+        config: $.config
+        env: $.env
+  flow-listener-3:
+    name: getJiraFields
+    parameters:
+      id: getJiraFields
+    enabled: true
+    invoke:
+      flow: getJiraFields
+      parameters:
+        request: $.request
+        config: $.config
+        env: $.env

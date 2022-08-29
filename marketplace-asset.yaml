@@ -1,0 +1,49 @@
+group: management
+apiVersion: v1alpha1
+kind: Integration
+title: Integrations for Marketplace Access Request Approvals
+name: integrations-for-accessrequest-approvals
+spec:
+  description: This is a group of resources to be used for marketplace access request approval workflows
+---
+group: management
+apiVersion: v1alpha1
+kind: Webhook
+title: Webhook Listener for Marketplace Access Request Approvals
+name: wh-integrations-for-accessrequest-approvals
+metadata:
+  scope:
+    kind: Integration
+    name: integrations-for-accessrequest-approvals
+spec:
+  enabled: true
+  # url:  https://0d6e-72-216-152-176.ngrok.io/api/amplifycentralwebhookhandler
+  # url:  https://subapproval.herokuapp.com/api/amplifycentralwebhookhandler
+  url : https://api-gw-dev.boehringer-ingelheim.com:8443/api-enablement-api/hooks
+  # url:  https://webhook.site/d00f9f5c-689f-4b67-8c9e-0b89237d78a9
+  headers:
+      # apikey: 8c88-f83b424e523c
+      KeyId: 57199363-f7a7-407e-baa8-e91ddcba36b9
+      Content-Type: application/json
+---
+group: management
+apiVersion: v1alpha1
+kind: ResourceHook
+title: Resource Hook for Marketplace Access Request Approvals
+name: rh-integrations-for-accessrequest-approvals
+metadata:
+  scope:
+    kind: Integration
+    name: integrations-for-accessrequest-approvals
+spec:
+  triggers:
+    - group: catalog
+      kind: AssetRequest
+      name: "*"
+      scope:
+        name: "*"
+        kind: Application
+      type:
+      - updated
+  webhooks:
+    - wh-integrations-for-accessrequest-approvals
